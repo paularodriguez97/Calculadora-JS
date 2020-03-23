@@ -83,7 +83,112 @@ var calculadora = {
 		document.getElementById("menos").addEventListener("click", function() {calculadora.ingresoOperacion("-");});
 		document.getElementById("mas").addEventListener("click", function() {calculadora.ingresoOperacion("+");});
 	},
+    borrarVisor: function(){ 
+
+	    this.valorVisor = "0";
+		this.operacion = "";
+		this.primerValor = 0;
+		this.segundoValor = 0;
+		this.resultado = 0;
+		this.Operación = "";
+		this.auxTeclaIgual = false;
+		this.ultimoValor = 0;
+		this.updateVisor();
+	},
 	
+	cambiarSigno: function(){
+		if (this.valorVisor !="0") {
+			var aux;
+			if (this.valorVisor.charAt(0)=="-") {
+				aux = this.valorVisor.slice(1);
+			}	else {
+				aux = "-" + this.valorVisor;
+			}
+		this.valorVisor = "";
+		this.valorVisor = aux;
+		this.updateVisor();
+		}
+	},
+	
+	ingresoDecimal: function(){
+		if (this.valorVisor.indexOf(".")== -1) {
+			if (this.valorVisor == ""){
+				this.valorVisor = this.valorVisor + "0.";
+			} else {
+				this.valorVisor = this.valorVisor + ".";
+			}
+			this.updateVisor();
+		}
+	},
+	
+	ingresoNumero: function(valor){
+		if (this.valorVisor.length < 8) {
+		
+			if (this.valorVisor=="0") {
+				this.valorVisor = "";
+				this.valorVisor = this.valorVisor + valor;
+			} else {
+				this.valorVisor = this.valorVisor + valor;
+			}
+		this.updateVisor();
+		}
+	},
+	
+	ingresoOperacion: function(oper){
+		this.primerValor = parseFloat(this.valorVisor);
+		this.valorVisor = "";
+		this.operacion = oper;
+		this.auxTeclaIgual = false;
+		this.updateVisor();
+	},
+	
+	verResultado: function(){
+
+		if(!this.auxTeclaIgual){ 
+			this.segundoValor = parseFloat(this.valorVisor);
+			this.ultimoValor = this.segundoValor;
+			this.realizarOperacion(this.primerValor, this.segundoValor, this.operacion);
+		
+		} else {
+			this.realizarOperacion(this.primerValor, this.ultimoValor, this.operacion);
+		}
+	
+		this.primerValor = this.resultado;
+		this.valorVisor = "";
+	
+		if (this.resultado.toString().length < 9){
+			this.valorVisor = this.resultado.toString();
+		} else {
+			this.valorVisor = this.resultado.toString().slice(0,8) + "...";
+		}
+	
+		this.auxTeclaIgual = true;		
+		this.updateVisor();
+	
+	},
+	
+	realizarOperacion: function(primerValor, segundoValor, operacion){
+		switch(operacion){
+			case "+": 
+				this.resultado = eval(primerValor + segundoValor);
+			break;
+			case "-": 
+				this.resultado = eval(primerValor - segundoValor);
+			break;
+			case "*": 
+				this.resultado = eval(primerValor * segundoValor);
+			break;
+			case "/": 
+				this.resultado = eval(primerValor / segundoValor);
+			break;
+			case "raiz":
+				this.resultado = eval(Math.sqrt(primerValor));
+		}
+	},
+	
+	updateVisor: function(){
+		this.visor.innerHTML = this.valorVisor;
+	}
 };
 
 calculadora.init();
